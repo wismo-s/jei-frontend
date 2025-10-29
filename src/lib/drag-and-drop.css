@@ -1,0 +1,50 @@
+/* Drag and Drop Styles */
+
+/* Dragging state for cards */
+.order-card-dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+/* Drop zone styles */
+.drop-zone-active {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    border: 2px dashed #3b82f6 !important;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.drop-zone-can-drop {
+    background-color: rgba(34, 197, 94, 0.1) !important;
+    border: 2px dashed #22c55e !important;
+}
+
+.drop-zone-invalid {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border: 2px dashed #ef4444 !important;
+}
+
+/* Smooth transitions for columns */
+.kanban-column {
+    transition: all 0.2s ease-in-out;
+}
+
+.kanban-column:hover {
+    transform: translateY(-2px);
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}

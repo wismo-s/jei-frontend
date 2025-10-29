@@ -1,0 +1,80 @@
+# Name for the GitHub Actions workflow.
+name: Frontend | Build, Push to AWS ECR & Deploy to Portainer
+
+# This workflow is triggered on every push to the "main" branch.
+# You can change "main" to the branch you use for production or staging.
+on:
+  push:
+    branches: ["main"]
+
+# Environment variables available for all jobs.
+env:
+  AWS_REGION: "sa-east-1" # Make sure this is your AWS region
+  ECR_REPOSITORY_FRONTEND: "ceu-erp" # CHANGE THIS to your ECR repo name for the frontend
+
+jobs:
+  build-and-push:
+    name: Build and Push Frontend to ECR
+    runs-on: ubuntu-latest
+    
+    # Required permissions for OIDC authentication with AWS.
+    permissions:
+      contents: read
+      id-token: write # Required for secure authentication with AWS
+
+    steps:
+      # Step 1: Clone the repository code.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Configure AWS credentials using OIDC (no access keys).
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_IAM_ROLE_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Step 3: Log in to Amazon ECR.
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Step 3.5: Set up Docker Buildx.
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 4: Extract the short commit hash to use as the image tag.
+      - name: Extract Docker image tag
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          tags: type=sha,prefix=,format=short
+
+      # Step 5: Build and push the frontend Docker image to ECR.
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile # Path to your frontend Dockerfile
+          push: true
+          # Create two tags: one with the commit hash and one 'latest'.
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ steps.meta.outputs.version }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:latest
+          # Inject environment variables at build time for Vite.
+          build-args: |
+            VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}
+            VITE_BUCKET_URL=${{ vars.VITE_BUCKET_URL }}
+          # Enable Docker layer cache to speed up future builds.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-to-container:
+    name: Deploy Frontend to Portainer
+    # This job runs only if 'build-and-push' was successful.
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      # Trigger the Portainer webhook to update the frontend service.
+      - name: Trigger Portainer Webhook
+        run: curl -X POST ${{ secrets.PORTAINER_FRONTEND_WEBHOOK_URL }}

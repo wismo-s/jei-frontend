@@ -1,0 +1,13 @@
+{
+    "tabWidth": 4,
+    "printWidth": 88,
+    "includeFiles": ["src/**/*"],
+    "overrides": [
+        {
+            "files": "*.css, *.yml",
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}
