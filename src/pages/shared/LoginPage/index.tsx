@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Button, Form, Input, notification, } from "antd";
+import { Button, Form, Input, notification, message } from "antd";
 import { useNavigate } from "react-router-dom";
 
 
@@ -46,6 +46,7 @@ export default function LoginPage() {
             } else if (error.code === "ERR_NETWORK") {
                 openErrorNotification("Error de red", error.message, api);
             }
+            message.error("el usuario o la contraseña son incorrectos");
         },
     });
     const handleSubmit = (values: FieldType) => {
