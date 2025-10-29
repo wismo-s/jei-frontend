@@ -1,27 +1,20 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Card, Avatar, Spin } from "antd";
-import { getMiembros } from "@services/portals/erp";
 
 interface Miembro {
   id: string;
   nombre: string;
   apellido: string;
   correo: string;
-  role: "ADMIN" | "USER";
+  role: "ADMIN" | "TRABAJADOR";
 }
 
-interface DepartmentMembersProps {
-  depEnum: string;
-}
+type DepartmentMembersProps = {
+  miembros: Miembro[];
+  isLoading?: boolean; // opcional, lo pasamos desde el padre
+};
 
-const DepartmentMembers: React.FC<DepartmentMembersProps> = ({ depEnum }) => {
-  const { data: miembros, isLoading } = useQuery<Miembro[]>({
-    queryKey: ["miembros", depEnum],
-    queryFn: () => getMiembros(depEnum),
-    enabled: !!depEnum,
-  });
-
+const DepartmentMembers: React.FC<DepartmentMembersProps> = ({ miembros, isLoading }) => {
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-[200px]">

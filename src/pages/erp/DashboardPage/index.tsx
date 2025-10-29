@@ -1,15 +1,11 @@
 import DashboardLayout from "@layouts/erp/DashboardLayout";
 import DeparmentStats from "@components/erp/molecules/DeparmentStats";
-import DepartmentProyects from "@components/erp/molecules/DepartmentProyects";
-import DepartmentMembers from "@components/erp/molecules/DepartmentMembers";
-import DeparmentEpics from "@components/erp/molecules/DeparmentEpics";
-import DeparmentIssues from "@components/erp/molecules/DeparmentIssues";
-import { Tabs, Select, Spin } from "antd";
+import DeparmentTabs from "@components/erp/molecules/DeparmentTabs";
+import { Select, Spin } from "antd";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@store/authStore";
 import { Departamento } from "@myTypes/erp";
 
-const { TabPane } = Tabs;
 
 const departmentMap: Record<string, Departamento> = {
   "Administracion y Finanzas": Departamento.ADMINISTRACION,
@@ -83,23 +79,7 @@ export default function ProductivityDashboardPage() {
       <DeparmentStats depEnum={depEnum} />
 
       {/* Tabs */}
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Miembros" key="1">
-          <DepartmentMembers depEnum={depEnum} />
-        </TabPane>
-
-        <TabPane tab="Proyectos" key="2">
-          <DepartmentProyects depEnum={depEnum} />
-        </TabPane>
-
-        <TabPane tab="Épicas" key="3">
-          <DeparmentEpics depEnum={depEnum} />
-        </TabPane>
-
-        <TabPane tab="Issues" key="4">
-          <DeparmentIssues depEnum={depEnum} />
-        </TabPane>
-      </Tabs>
+      <DeparmentTabs depEnum={depEnum} />
     </DashboardLayout>
   );
 }

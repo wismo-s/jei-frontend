@@ -1,5 +1,5 @@
 import { portalsApi } from "@services/portals/index";
-import { EstadisticasResponse } from "@myTypes/erp";
+import { EstadisticasResponse, Issue } from "@myTypes/erp";
 
 export const getEstadisticas = async (
     departamento: string,
@@ -69,4 +69,14 @@ export const getIssues = async (
 
     console.log(response.data);
     return response.data;
+};
+
+export const createIssue = async (issue: Issue) => {
+  const response = await portalsApi.post<EstadisticasResponse>(`/issues`, issue);
+  return response.data;
+};
+
+export const updateIssue = async (id: number, issue: Issue) => {
+  const response = await portalsApi.put<EstadisticasResponse>(`/issues/${id}`, issue);
+  return response.data;
 };

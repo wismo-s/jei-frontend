@@ -18,6 +18,14 @@ export enum Role {
     ADMIN = "ADMIN",
     TRABAJADOR = "TRABAJADOR",
 }
+export interface Miembro {
+  id: string;
+  nombre: string;
+  apellido: string;
+  correo: string;
+  role: "ADMIN" | "TRABAJADOR";
+}
+
 
 export interface Usuario {
     id: number;
@@ -47,3 +55,26 @@ export type EstadoIssue =
   | "REVISION"
   | "EN_CURSO"
   | "SIN_EMPEZAR"
+
+  export enum Tipo {
+  TASK = "TASK",
+  STORY = "STORY",
+}
+export enum Prioridad {
+  ALTA = "ALTA",
+  MEDIA = "MEDIA",
+  BAJA = "BAJA",
+}
+
+  export type Issue = {
+  nombre: string;
+  usuario: number; 
+  prioridad: Prioridad;
+  estado: EstadoIssue;
+  departamento: Departamento;
+  tipo: Tipo;
+  epicos: number;
+  sprint?: string;
+  proyecto: number;
+  fecha: string; 
+};

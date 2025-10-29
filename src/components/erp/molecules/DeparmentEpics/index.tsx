@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { Row, Col, Card, Progress, Tag, Avatar, Button, Input, Spin } from "antd";
-import { useQuery } from "@tanstack/react-query";
-import { getEpicas } from "@services/portals/erp";
 import { EstadoEpic } from "@myTypes/erp";
 
 const { Search } = Input;
 
-interface DepartmentEpicsProps {
-  depEnum: string;
-}
-
+type DepartmentEpicsProps = {
+  epicas: EstadoEpic[]; 
+  epicaFilter: EstadoEpic | "Todos";    
+  setEpicaFilter: (f: EstadoEpic | "Todos") => void;
+};
 const epicaEstados: EstadoEpic[] = [
   EstadoEpic.ABIERTA,
   EstadoEpic.EN_PROGRESO,
@@ -22,26 +21,13 @@ const estadoColors: Record<EstadoEpic, string> = {
   [EstadoEpic.COMPLETADA]: "green",
 };
 
-const DepartmentEpics: React.FC<DepartmentEpicsProps> = ({ depEnum }) => {
-  const [epicaFilter, setEpicaFilter] = useState<EstadoEpic | "Todos">("Todos");
+const DepartmentEpics: React.FC<DepartmentEpicsProps> = ({
+  epicas,
+  epicaFilter,
+  setEpicaFilter,
+}) => {
   const [searchText, setSearchText] = useState("");
 
-  const { data: epicas, isLoading } = useQuery({
-    queryKey: ["epicas", depEnum, epicaFilter],
-    queryFn: () =>
-      getEpicas({
-        departamento: depEnum,
-        estado: epicaFilter !== "Todos" ? epicaFilter : undefined,
-      }),
-    enabled: !!depEnum,
-  });
-
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center h-[200px]">
-        <Spin size="large" />
-      </div>
-    );
 
   // Filtrado por búsqueda
   const filteredEpicas = epicas?.filter((e) =>
@@ -81,16 +67,6 @@ const DepartmentEpics: React.FC<DepartmentEpicsProps> = ({ depEnum }) => {
       {/* 🔹 Cards de épicas */}
       {filteredEpicas && filteredEpicas.length > 0 ? (
         <Row gutter={[16, 16]} className="mb-6">
-          {filteredEpicas.map((e) => (
-            <Col xs={24} md={12} lg={8} key={e.id}>
-              <Card>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">{e.nombre}</span>
-                  <Progress percent={e.progreso || 0} size="small" status="active" />
-                </div>
-              </Card>
-            </Col>
-          ))}
         </Row>
       ) : (
         <div className="p-4 text-gray-500 mb-6 text-center">No hay épicas</div>

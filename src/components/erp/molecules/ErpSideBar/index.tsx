@@ -46,12 +46,12 @@ export default function ErpSideBar() {
     return (
         <Menu
             onClick={onClick}
-            style={{ width: 256, border: 0 }}
+            style={{ width: 180, border: 0 }}
             defaultSelectedKeys={[selectedKey]}
             defaultOpenKeys={[""]}
             mode="inline"
             items={items}
-            className="hidden md:block min-w-64 sticky left-0 top-0"
+            className="hidden md:block min-w-24 sticky left-0 top-0"
         />
     );
 }
